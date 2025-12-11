@@ -104,3 +104,64 @@
       el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
       observer.observe(el);
     });
+// Function to handle the selection of the subscription plan (Single or Double) and toggle content visibility
+function selectSubscriptionPlan(selectedPlanCard) {
+    // 1. Deselect all plans and hide their content
+    document.querySelectorAll('.plan-card').forEach(card => {
+        card.classList.remove('selected-plan');
+        
+        // Find the content wrapper and hide the content
+        const contentToggle = card.querySelector('.plan-details-toggle');
+        if (contentToggle) {
+            contentToggle.classList.remove('active-content');
+        }
+    });
+
+    // 2. Select the clicked plan and show its content
+    selectedPlanCard.classList.add('selected-plan');
+    
+    // Find the content wrapper of the clicked plan and show the content
+    const selectedContentToggle = selectedPlanCard.querySelector('.plan-details-toggle');
+    if (selectedContentToggle) {
+        selectedContentToggle.classList.add('active-content');
+    }
+}
+
+// --- Event Listeners ---
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // 1. Attach listener to the main plan cards for selection
+    document.querySelectorAll('.plan-card').forEach(card => {
+        card.addEventListener('click', function(event) {
+            // Check if the click occurred outside the plan details area (to allow clicks inside the expanded area)
+            if (!event.target.closest('.plan-details-toggle')) {
+                selectSubscriptionPlan(this);
+            }
+        });
+    });
+
+    // 2. Fragrance Selection listener (also ensures the parent plan is selected/visible)
+    document.querySelectorAll('.fragrance-option').forEach(option => {
+        option.addEventListener('click', function() {
+            // Existing logic for selecting the fragrance within its group
+            const fragranceOptionsContainer = this.closest('.fragrance-options');
+            if (fragranceOptionsContainer) {
+                fragranceOptionsContainer.querySelectorAll('.fragrance-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            }
+            
+            // Explicitly call selectSubscriptionPlan to ensure the parent card stays visible
+            const parentPlanCard = this.closest('.plan-card');
+            if (parentPlanCard) {
+                selectSubscriptionPlan(parentPlanCard);
+            }
+        });
+    });
+    
+    // If you need your other existing functions (like toggleExpand, handleNewsletterSubmit, etc.), 
+    // you should paste them here, below the plan selection logic.
+
+});
